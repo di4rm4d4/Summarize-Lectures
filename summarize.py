@@ -18,17 +18,14 @@ OUTPUT_JSON = "transcription.json"
 SAVE_INTERVAL = 60  
 
 def get_system_audio_device():
+    """""
+    get the default system audio device, make sure mic access is ON
+    """""
     devices = sd.query_devices()
     print("Available audio devices:")
     for i, device in enumerate(devices):
         print(f"{i}: {device['name']}")
     
-    for device in devices:
-        if "Stereo Mix" in device["name"] or "Loopback" in device["name"] or "VB-Audio" in device["name"]:
-            return device["index"]
-    
-    # Fallback to default input device if no system audio device is found
-    print("System audio device not found. Using default input device.")
     return sd.default.device[0]
 
 DEVICE_INDEX = get_system_audio_device()
@@ -46,7 +43,7 @@ def save_transcription_to_json(text_list):
 def transcribe_audio(update_callback):
     with sd.InputStream(callback=callback, samplerate=SAMPLE_RATE, channels=CHANNELS, 
                         blocksize=BLOCK_SIZE, device=DEVICE_INDEX):
-        print("Listening to system audio.")
+        print("Listening to audio")
 
         start_time = time.time()
 
@@ -61,13 +58,13 @@ def transcribe_audio(update_callback):
                     segments, _ = whisper_model.transcribe(audio_array, language="en")
                     for segment in segments:
                         transcribed_text.append(segment.text)
-                        update_callback(f"📝 Transcribed: {segment.text}")
+                        update_callback(f"Text: {segment.text}")
 
-                # Check if it's time to save the transcription
+        
                 if time.time() - start_time >= SAVE_INTERVAL:
                     save_transcription_to_json(transcribed_text)
-                    start_time = time.time()  # Reset the timer
+                    start_time = time.time()  
 
         except KeyboardInterrupt:
-            print("\n⏹️ Stopped listening.")
+            print("\nTranscription stopped")
             save_transcription_to_json(transcribed_text)

@@ -17,17 +17,17 @@ def summarize_transcription_from_json():
         full_text = " ".join(data["transcription"])
     
     summary = summarize_text(full_text)
-    print("\n🔹 **Summary:**")
+    print("\n Summary:")
     print(summary)
-    return summary  # Ensure the summary is returned
+    return summary  
 
 def save_to_obsidian_vault(vault_path, note_title, note_content):
     note_path = os.path.join(vault_path, f"{note_title}.md")
     with open(note_path, "w", encoding="utf-8") as f:
         f.write(note_content)
-    print(f"Note saved to {note_path}")
+    print(f"Notes saved to {note_path}")
 
 if __name__ == "__main__":
     summary = summarize_transcription_from_json()
-    vault_path = "a15fcf63dded4ece"  
+    vault_path = ""  
     save_to_obsidian_vault(vault_path, "Summarized Transcription", summary)

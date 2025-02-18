@@ -1,0 +1,6 @@
+PyQt6
+transformers
+sounddevice
+numpy
+faster_whisper
+requests

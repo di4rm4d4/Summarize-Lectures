@@ -2,20 +2,20 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPush
 import sys
 import threading
 
-from transcribeSummarize import transcribe_audio, save_transcription_to_json, transcribed_text
-from summarizeTranscription import summarize_transcription_from_json, save_to_obsidian_vault
+from summarize import transcribe_audio, save_transcription_to_json, transcribed_text
+from transcription import summarize_transcription_from_json, save_to_obsidian_vault
 
 class LectureTranscriber(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Lecture AI - Live Transcription & Notes")
+        self.setWindowTitle("Summarize Lectures")
         self.setGeometry(100, 100, 800, 600)
 
         self.layout = QVBoxLayout()
 
         self.transcriptBox = QTextEdit(self)
-        self.transcriptBox.setPlaceholderText("Live transcript will appear here...")
+        self.transcriptBox.setPlaceholderText("Live transcription:")
         self.layout.addWidget(self.transcriptBox)
 
         self.vaultPathLabel = QLabel("Obsidian Vault Path:")
@@ -65,7 +65,7 @@ class LectureTranscriber(QWidget):
         if self.transcribing:
             self.transcribing = False
             save_transcription_to_json(transcribed_text)
-            print("\n⏹️ Stopped listening.")
+            print("Stopped listening.")
             self.transcription_thread = None
 
     def summarize_transcription(self):
@@ -73,9 +73,9 @@ class LectureTranscriber(QWidget):
 
     def run_summarization(self):
         summary = summarize_transcription_from_json()
-        self.transcriptBox.append("\n📌 **Summary:** " + summary)
+        self.transcriptBox.append("\nSummary: " + summary)
         vault_path = self.vaultPathInput.text()
-        save_to_obsidian_vault(vault_path, "Summarized Transcription", summary)
+        save_to_obsidian_vault(vault_path, "Summarized Lecture", summary)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
